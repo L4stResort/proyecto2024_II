@@ -5,5 +5,5 @@ langchain-core
 langchain-community
 langchain-groq
 sentence-transformers
-faiss-cpu==1.6.3
+faiss-cpu==1.6.0
 
