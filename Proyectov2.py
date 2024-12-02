@@ -145,7 +145,7 @@ def get_conversation_chain(retriever):
     )
     return conversational_rag_chain
 
-st.title("Chat con tus documentos :books:")
+st.title("Consulta tus documentos aquí :books:")
 
 # Cargar documentos PDF
 uploaded_files = st.sidebar.file_uploader("Sube documentos PDF", type=["pdf"], accept_multiple_files=True)
