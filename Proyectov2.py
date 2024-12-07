@@ -15,6 +15,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 import faiss
 import shutil
 import os
+from fpdf import FPDF
 
 # Templates HTML para mensajes
 bot_template = '''
@@ -145,6 +146,37 @@ def get_conversation_chain(retriever):
     )
     return conversational_rag_chain
 
+# Función para generar el PDF con todo el historial
+def generar_pdf(historial):
+    pdf = FPDF(orientation="P", unit="mm", format="A4")
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    # Título del documento
+    pdf.set_font("Arial", style="B", size=14)
+    pdf.cell(0, 10, txt="Historial de Preguntas y Respuestas", ln=True, align="C")
+    pdf.ln(10)
+
+    # Contenido del historial
+    for index, mensaje in enumerate(historial):
+        pdf.set_font("Arial", style="B", size=12)
+        pdf.cell(0, 10, f"Pregunta {index + 1}:", ln=True)
+        pdf.set_font("Arial", size=12)
+        pdf.multi_cell(0, 10, mensaje['user'])
+
+        pdf.set_font("Arial", style="B", size=12)
+        pdf.cell(0, 10, " ", ln=True, align="L") #parte respuesta
+        pdf.set_font("Arial", size=12)
+        pdf.multi_cell(0, 10, mensaje['bot'])
+
+
+
+        pdf.ln(10)  # Espacio entre secciones
+
+    return pdf
+
+#Interfaz de Streamlit
 st.title("Consulta tus documentos aquí :books:")
 
 # Cargar documentos PDF
@@ -199,15 +231,32 @@ if st.session_state.chat_history:
                 st.session_state[f"show_docs_{index}"] = not st.session_state[f"show_docs_{index}"]
 
 
+
         if st.session_state[f"show_docs_{index}"]:
             with st.expander("Extractos del documento"):
                 for doc in message.get('context_docs', []):
                     st.write(f"Source: {doc.metadata['source']}")
                     st.write(doc.page_content)
-
         
 #
 
+#nuevo
+# Botón único para generar PDF con todo el historial
+if st.button("Generar PDF"):
+    if st.session_state.chat_history:
+        pdf = generar_pdf(st.session_state.chat_history)
+        pdf_output = "historial_completo.pdf"
+        pdf.output(pdf_output)
+        with open(pdf_output, "rb") as pdf_file:
+            st.download_button(
+                label="Descargar PDF",
+                data=pdf_file,
+                file_name="historial_preguntas_respuestas.pdf",
+                mime="application/pdf",
+            )
+    else:
+        st.warning("No hay historial disponible para generar el PDF.")
+#nuevo
 
 
 if st.sidebar.button("Limpiar base de datos"):
