@@ -16,6 +16,7 @@ import faiss
 import shutil
 import os
 from fpdf import FPDF
+import config
 
 # Templates HTML para mensajes
 bot_template = '''
@@ -94,7 +95,7 @@ def ingest_into_vectordb(split_docs):
 
 # Configuración del LLM Groq y cadena de recuperación
 def get_conversation_chain(retriever):
-    llm = ChatGroq(model="mixtral-8x7b-32768", api_key="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")
+    llm = ChatGroq(model="mixtral-8x7b-32768", api_key=config.GROQ_API_KEY)
     contextualize_q_system_prompt = (
         "Given the chat history and the latest user question, "
         "provide a response that directly addresses the user's query based on the provided documents."
