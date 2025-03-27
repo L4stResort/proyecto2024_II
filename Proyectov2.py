@@ -95,7 +95,7 @@ def ingest_into_vectordb(split_docs):
 
 # Configuración del LLM Groq y cadena de recuperación
 def get_conversation_chain(retriever):
-    llm = ChatGroq(model="mistral-saba-24b llama-3.3-70b-versatile", api_key=config.GROQ_API_KEY)
+    llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=config.GROQ_API_KEY)
     contextualize_q_system_prompt = (
         "Given the chat history and the latest user question, "
         "provide a response that directly addresses the user's query based on the provided documents."
